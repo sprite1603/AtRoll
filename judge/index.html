@@ -64,6 +64,17 @@ details.hist li p{margin:0;white-space:pre-wrap;color:var(--ink);overflow-wrap:a
 .state{font-size:.75rem;padding:2px 8px;border-radius:10px;border:1px solid var(--line);color:var(--muted)}
 .state.on{border-color:var(--purple);color:var(--purple)}
 .empty{text-align:center;color:var(--muted);margin:0}
+button.lockbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:6px;font:inherit;font-weight:700;letter-spacing:.15em;
+  background:linear-gradient(180deg,#2a1f47,#1b1430);color:var(--ink);border:1px solid var(--purple);box-shadow:0 0 24px var(--glow)}
+button.lockbtn svg,.unlocked .seal svg{width:22px;height:22px;fill:none;stroke:var(--purple);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+button.lockbtn.opened{box-shadow:none;color:var(--muted);border-color:var(--line);letter-spacing:.08em}
+.unlocked{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.unlocked .seal{width:84px;height:84px;border-radius:50%;border:2px solid var(--purple);display:grid;place-items:center;box-shadow:0 0 40px var(--glow);margin-bottom:6px}
+.unlocked .seal svg{width:40px;height:40px}
+.unlocked h2{font-size:2.2rem}
+.unlocked.fresh .seal{animation:seal .7s ease-out}
+@keyframes seal{0%{transform:scale(.4) rotate(-20deg);opacity:0}60%{transform:scale(1.12) rotate(4deg);opacity:1}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.unlocked.fresh .seal{animation:none}}
 .loginbadge{position:fixed;z-index:5;top:calc(12px + env(safe-area-inset-top, 0px));right:12px;font-size:.78rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
 .loginbadge.on{border-color:var(--purple);color:var(--ink);background:var(--purple-soft)}
 .loginbadge.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--purple);margin-right:7px;vertical-align:1px}
@@ -93,7 +104,7 @@ a.openlink{display:block;text-align:center;font-weight:700;padding:14px;border-r
 .modal .body{margin:0;font-size:1.15rem;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;border-block:1px solid var(--line);padding-block:20px}
 .modal .ask{margin:0;text-align:center;color:var(--muted);font-size:.9rem}
 .reopen{background:var(--purple-soft);color:var(--ink);border:1px solid var(--purple);font-weight:400;font-size:.9rem}
-</style><script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" id="qrlib"></script><script type="application/json" id="config">{"salt":"98acf7ea01c415c5","steps":[{"fields":["A","B"],"check":"f1f27f7f4b564b1c68e334ba96c5912e3c18303d856ebcd9169f77446e646226","iv":"bQM8i4Q0ZpDrWeUM","ct":"rirKehqczRUiOpB+jbmehLsXF0Jxc4wqyuUkSnDCPKtaU0lobbdckIXp8WVHlGb1Z4PJdJVApUdfAV6xa8gTaE2b"},{"fields":["C","D","E"],"check":"fad856fc00e55b276aaa540f5bb69c39973a25adc2842ea914ce35a566dc53ff","iv":"2PdpIhrMsD8WHCk+","ct":"b9F5EeIGLrvIrk4zbDiUAz4LVBEor6TFs1dw61onfVr90k/NHM9FBk0GXLs693S4uj9ySGgNo9Gp20MQt5sz1q7v1ht/MwihuW6Tta3z5xEHFN+W8UytLoD3RaD2bKU9Pmul9h6i30ga"},{"fields":["F","G","H"],"check":"35b2eebabe1f10d553016c370e8818e6073e95e1eb9e9dde07363a5c5b2d08bc","iv":"l2BSHW3UK3gVWqKG","ct":"0/ZdAkGSgJBcf16jXr9rDL/4fvCvMTGpuTM8n6SGLybfckCw2SKZrXl+iid/rR5/3okzNVcJ1bLLymYmeHjlNyHHl+nldR8aDdDrgjB2fBnasyL/oYD8sVMKrrESm4LdY7VE43QQfGDwllTEQVRulrhthIIfsw=="}]}</script><script id="app">
+</style><script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" id="qrlib"></script><script type="application/json" id="config">{"salt":"98acf7ea01c415c5","steps":[{"fields":["A","B"],"check":"f1f27f7f4b564b1c68e334ba96c5912e3c18303d856ebcd9169f77446e646226","iv":"bQM8i4Q0ZpDrWeUM","ct":"rirKehqczRUiOpB+jbmehLsXF0Jxc4wqyuUkSnDCPKtaU0lobbdckIXp8WVHlGb1Z4PJdJVApUdfAV6xa8gTaE2b"},{"fields":["C","D","E"],"check":"fad856fc00e55b276aaa540f5bb69c39973a25adc2842ea914ce35a566dc53ff","iv":"2PdpIhrMsD8WHCk+","ct":"b9F5EeIGLrvIrk4zbDiUAz4LVBEor6TFs1dw61onfVr90k/NHM9FBk0GXLs693S4uj9ySGgNo9Gp20MQt5sz1q7v1ht/MwihuW6Tta3z5xEHFN+W8UytLoD3RaD2bKU9Pmul9h6i30ga"},{"fields":["F","G","H"],"check":"35b2eebabe1f10d553016c370e8818e6073e95e1eb9e9dde07363a5c5b2d08bc","iv":"l2BSHW3UK3gVWqKG","ct":"0/ZdAkGSgJBcf16jXr9rDL/4fvCvMTGpuTM8n6SGLybfckCw2SKZrXl+iid/rR5/3okzNVcJ1bLLymYmeHjlNyHHl+nldR8aDdDrgjB2fBnasyL/oYD8sVMKrrESm4LdY7VE43QQfGDwllTEQVRulrhthIIfsw=="},{"fields":["I"],"check":"0147d6a0f19846aba64344b5b7a85db6fd13004f84ae264de565f0e2116bf1c0","iv":"qS0YYd8EVu4Om3Jn","ct":"k4kvPzL7NoiipvW15BhEidPlZHpR8o82OPkV5k8CLA1lAtPQNoThnRrVTfRstEQyAuuP6lvmUAyNE43KeS1Ai8e/VI3FdjFyZuwB1aVyUP02CkY5QG/Vh8MYei3kfr1qoOr9ATSoLlAK0bf+ZDGh"}],"lock":{"step":4,"check":"666cc4acda48ca3bd327317922c4f74fbf8a8ae716359d6582d6270959c7deec"}}</script><script id="app">
 (() => {
 const CONFIG = JSON.parse(document.getElementById('config').textContent);
 const te = new TextEncoder(), td = new TextDecoder();
@@ -153,10 +164,62 @@ renderBadge();
 const QR_ACTIONS = {
   participant: () => {
     login('participant');
+    renderPlay();
     showScan(`<div class="top"><h2>ログインしました</h2></div><p class="body" style="text-align:center">参加者としてログインしました。</p>`, true);
   },
 };
 let canEdit = false, artifactApi = null;
+
+// ===== 厳重ロック =====
+// ログイン後に出るボタンから、パスワードで解除する。パスワードは照合用の値だけを持つ
+const LKEY = 'nazo-lock-' + CONFIG.salt;
+let unlocked = store.get(LKEY) === true;
+const LOCK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/><path d="M12 14.5v2.5"/></svg>';
+const UNLOCK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 6.6-1.6"/><path d="M12 14.5v2.5"/></svg>';
+async function pwCheck(pw){
+  const buf = await crypto.subtle.digest('SHA-256', te.encode(CONFIG.salt + '|lock|' + pw.normalize('NFKC').trim()));
+  return hex(new Uint8Array(buf));
+}
+function askPassword(){
+  showScan(`<div class="top"><span class="eyebrow">SECURITY LOCK</span><h2>厳重ロック解除</h2></div>
+    <form class="answer" id="pwForm" novalidate>
+      <input id="pw" type="password" autocomplete="off" placeholder="パスワードを入力" aria-label="パスワード">
+      <button class="primary" type="submit">解除する</button>
+    </form>
+    <p class="msg" id="pwMsg" aria-live="polite"></p>
+    <div class="row"><button class="sub" id="pwCancel" type="button">やめる</button></div>`);
+  const form = document.getElementById('pwForm'), input = document.getElementById('pw'), msg = document.getElementById('pwMsg');
+  input.focus();
+  document.getElementById('pwCancel').onclick = closeScan;
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!input.value.trim()){ msg.className = 'msg ng'; msg.textContent = 'パスワードを入力してください'; return; }
+    if (await pwCheck(input.value) !== CONFIG.lock.check){
+      msg.className = 'msg ng'; msg.textContent = 'パスワードが違います';
+      form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
+      input.select(); return;
+    }
+    unlocked = true; store.set(LKEY, true);
+    renderPlay();
+    showUnlocked(true);
+  });
+}
+function showUnlocked(fresh){
+  showScan(`<div class="unlocked ${fresh ? 'fresh' : ''}">
+      <div class="seal">${UNLOCK_SVG}</div>
+      <span class="eyebrow">SECURITY LOCK RELEASED</span>
+      <h2>厳重ロック解除</h2>
+      <p class="ask">ロックが解除されました。</p>
+    </div>
+    <button class="primary" id="ulClose" type="button">閉じる</button>`);
+  document.getElementById('ulClose').onclick = closeScan;
+  document.getElementById('ulClose').focus();
+}
+function closeScan(){
+  stopCamera();
+  document.getElementById('scanModal')?.remove();
+  if (!document.getElementById('modal')) document.body.style.overflow = '';
+}
 
 // ===== 回答画面 =====
 function renderPlay(flash){
@@ -177,7 +240,9 @@ function renderPlay(flash){
            <button class="primary" type="submit">判定する</button>
          </form>
          <p class="msg" id="msg" aria-live="polite"></p>`}
-    <button class="scan" id="scanBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM14 14h2v2h-2z"/></svg>QRコードを読み取る</button>
+    ${!done && n && s === CONFIG.lock?.step ? (role
+      ? `<button class="lockbtn ${unlocked ? 'opened' : ''}" id="lockBtn" type="button">${LOCK_SVG}${unlocked ? '厳重ロック 解除済み' : '厳重ロック解除'}</button>`
+      : `<button class="scan" id="scanBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM14 14h2v2h-2z"/></svg>ログイン</button>`) : ''}
     <input type="file" id="qrfile" accept="image/*" capture="environment" hidden>
     <div class="row" id="resetRow">${s > 1 ? '<button class="sub" id="reset" type="button">最初からやり直す</button>' : ''}${canEdit ? '<button class="sub" id="toAdmin" type="button">管理画面</button>' : ''}</div>
   </div>`;
@@ -213,12 +278,13 @@ function renderPlay(flash){
   const reset = document.getElementById('reset');
   if (reset) reset.onclick = () => {
     document.getElementById('resetRow').innerHTML = '最初に戻しますか？ <button class="sub" id="yes" type="button">戻す</button><button class="sub" id="no" type="button">やめる</button>';
-    document.getElementById('yes').onclick = () => { play = { step:1, notes:[] }; store.set(PKEY, play); renderPlay(); };
+    document.getElementById('yes').onclick = () => { play = { step:1, notes:[] }; store.set(PKEY, play); role = null; store.set(RKEY, null); unlocked = false; store.set(LKEY, false); renderBadge(); renderPlay(); };
     document.getElementById('no').onclick = () => renderPlay();
   };
   const ta = document.getElementById('toAdmin'); if (ta) ta.onclick = openAdmin;
   document.getElementById('qrfile').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) scanQR(f); };
-  document.getElementById('scanBtn').onclick = openCamera;
+  const sb = document.getElementById('scanBtn'); if (sb) sb.onclick = openCamera;
+  const lb = document.getElementById('lockBtn'); if (lb) lb.onclick = () => unlocked ? showUnlocked() : askPassword();
 }
 
 // ===== QRコード読み取り =====
@@ -384,7 +450,7 @@ function renderAdmin(status){
     const ti = document.getElementById('txt-' + i);
     document.getElementById('fld-' + i).addEventListener('change', e => {
       const f = parseFields(e.target.value);
-      r.fields = f.length > 1 ? f : [];
+      r.fields = f;
       const n = r.fields.length || 1;
       r.answers = Array.from({ length:n }, (_, k) => r.answers[k] || '');
       renderAdmin();
@@ -427,7 +493,7 @@ async function save(){
     cache[i + 1] = joined(rows[i]);
   }
   store.set(AKEY, cache);
-  const cfg = JSON.stringify({ salt: CONFIG.salt, steps }).replace(/</g, '\\u003c');
+  const cfg = JSON.stringify({ salt: CONFIG.salt, steps, ...(CONFIG.lock ? { lock: CONFIG.lock } : {}) }).replace(/</g, '\\u003c');
   const reset = document.head.querySelector('style')?.textContent || '';
   const html = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + reset + '</style></head><body>'
     + '<title>' + document.title + '</title>' + document.querySelector('link[href*="fonts.googleapis"]').outerHTML
