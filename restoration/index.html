@@ -3,7 +3,7 @@
 :root{
   --bg:#0b0a10; --panel:#15121f; --line:#2c2540; --ink:#ece8f6; --muted:#9a91b3;
   --purple:#9b6dff; --purple-soft:#2a1f47; --ng:#ff6b8a; --on-purple:#0b0a10;
-  --key:#1b1628; --scrim:rgba(6,4,12,.55); --glow:rgba(155,109,255,.25);
+  --key:#221c33; --scrim:rgba(6,4,12,.55); --glow:rgba(155,109,255,.25);
   --f-display:"Shippori Mincho B1","Hiragino Mincho ProN",serif;
   --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,monospace;
@@ -82,11 +82,10 @@ button.condbtn{width:100%;padding:12px;font-size:.95rem;font-weight:700;color:va
 .pins i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--purple)}
 .pins i.on{background:var(--purple);box-shadow:0 0 10px var(--glow)}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:330px;margin-inline:auto}
-.keypad .key{aspect-ratio:1/1;padding:12%;background:var(--bg);border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;color:var(--ink);
+.keypad .key{aspect-ratio:1/1;padding:12%;background:var(--key);border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;color:var(--ink);
   transition:border-color .15s,background .15s}
 .keypad .key:hover{border-color:var(--purple);filter:none}
-.keypad .key svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.keypad .key svg .dot{fill:currentColor;stroke:none}
+.keypad .key svg{width:100%;height:100%;overflow:visible}
 .keypad .key.hit{animation:hit .25s ease-out}
 @keyframes hit{0%{background:var(--purple-soft);border-color:var(--purple);transform:scale(.94)}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){.keypad .key.hit{animation:none}}
@@ -207,16 +206,16 @@ async function pwCheck(pw){
 }
 // キーパッド。左上から順に 0〜8。押した順番（例「3,2,6」）を照合する
 const KEYPAD = [
-  ['熊', '<circle cx="13" cy="14" r="5.5" FILL/><circle cx="35" cy="14" r="5.5" FILL/><circle cx="24" cy="27" r="14" FILL/><ellipse cx="24" cy="32" rx="6.5" ry="5" FILL/><circle cx="18.5" cy="24" r="1.6" class="dot"/><circle cx="29.5" cy="24" r="1.6" class="dot"/><path d="M22 30.5h4"/><path d="M24 30.5v3"/>'],
-  ['鯛', '<path d="M5 25c6-10 19-13 29-6l7-6v24l-7-6c-10 7-23 4-29-6z" FILL/><circle cx="12.5" cy="23" r="1.6" class="dot"/><path d="M17 18.5c2.5 3.5 2.5 9 0 12.5"/><path d="M15 16l3-4.5 3.5 3.5 3.5-4.5 3.5 3.5 3.5-3"/><path d="M5 25h3"/>'],
-  ['板', '<path d="M5 19l8-5h30l-8 5z" FILL/><rect x="5" y="19" width="30" height="13" FILL/><path d="M35 19l8-5v13l-8 5"/><path d="M9 23.5c5-1.5 9 1.5 14 0s7-1 9 0M9 28c4 1 8-1 12 0s7 1 10-.5"/><ellipse cx="26" cy="25.5" rx="2.2" ry="1.4"/>'],
-  ['柚子', '<circle cx="24" cy="28" r="13" FILL/><path d="M24 15v-4"/><path d="M24 12c3-5 9-6.5 13-4.5-2 4.5-8 6.5-13 4.5z" FILL/><circle cx="19" cy="24" r=".9" class="dot"/><circle cx="27" cy="22" r=".9" class="dot"/><circle cx="30" cy="30" r=".9" class="dot"/><circle cx="21" cy="32" r=".9" class="dot"/><circle cx="25" cy="27.5" r=".9" class="dot"/><circle cx="17" cy="29.5" r=".9" class="dot"/>'],
-  ['川', '<path d="M5 15c4.5-3.5 8.5 3.5 13 0s8.5-3.5 13 0 8.5 3.5 12 0"/><path d="M5 24c4.5-3.5 8.5 3.5 13 0s8.5-3.5 13 0 8.5 3.5 12 0"/><path d="M5 33c4.5-3.5 8.5 3.5 13 0s8.5-3.5 13 0 8.5 3.5 12 0"/>'],
-  ['山', '<path d="M3 39l15-24 8 12 6-8 13 20z" FILL/><path d="M12.5 24.5l5.5 3 4-3"/><path d="M28.5 23.5l3.5 2 2.5-2"/>'],
-  ['枠', '<rect x="7" y="7" width="34" height="34" rx="1" FILL/><rect x="14" y="14" width="20" height="20"/><path d="M7 7l7 7M41 7l-7 7M7 41l7-7M41 41l-7-7"/>'],
-  ['水', '<path d="M24 6c-6.5 10-13 16.5-13 24a13 13 0 0 0 26 0c0-7.5-6.5-14-13-24z" FILL/><path d="M17.5 31a7 7 0 0 0 5.5 6.5"/>'],
-  ['ドア', '<path d="M6 42h36"/><rect x="13" y="6" width="22" height="36" rx="1" FILL/><rect x="17" y="10" width="11" height="11"/><rect x="17" y="26" width="11" height="12"/><circle cx="31.5" cy="24" r="1.6" class="dot"/>'],
-].map(([name, svg]) => [name, svg.replaceAll('FILL', 'style="fill:var(--key)"')]);
+  ['熊', '<circle cx="12" cy="13" r="6" fill="#8b5a2b"/><circle cx="36" cy="13" r="6" fill="#8b5a2b"/><circle cx="12" cy="13" r="3" fill="#d9a46b"/><circle cx="36" cy="13" r="3" fill="#d9a46b"/><circle cx="24" cy="27" r="15" fill="#8b5a2b"/><ellipse cx="24" cy="32.5" rx="7.5" ry="6" fill="#e3b37c"/><circle cx="18" cy="23.5" r="2" fill="#24150b"/><circle cx="30" cy="23.5" r="2" fill="#24150b"/><ellipse cx="24" cy="29.8" rx="3" ry="2.2" fill="#24150b"/><path d="M24 31.8v2.6M21.6 35.2c1.5 1 3.3 1 4.8 0" stroke="#24150b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'],
+  ['鯛', '<path d="M15 17l2-6.5 3 4.5 3-5.5 3 4.5 3-4.5 2 6c-6-1.5-11-.5-16 1.5z" fill="#c92f48"/><path d="M4 26c5-11 19-15 30-8l9-7v28l-9-7c-11 7-25 3-30-6z" fill="#e5475e"/><path d="M7 28.5c7 5 18 5.5 27 .5-9 1.5-19 1.5-27-.5z" fill="#f7a8b0"/><path d="M17.5 19.5c2.5 4 2.5 9 0 13" stroke="#b8283f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M22 30l4 5 2-4" fill="#c92f48"/><circle cx="11" cy="23.5" r="2.7" fill="#fff"/><circle cx="11" cy="23.5" r="1.4" fill="#222"/>'],
+  ['板', '<g transform="rotate(-22 24 24)"><rect x="1" y="21" width="46" height="4" rx="1" fill="#93592a"/><rect x="1" y="12" width="46" height="10" rx="1.2" fill="#d79a58"/><path d="M4 15.5c7-1.5 12 1.5 19 0s12-1.5 21 0M4 19c6 1 11-1 17 0s11 1 22-.5" stroke="#9c6230" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><ellipse cx="31" cy="17.2" rx="2.4" ry="1.4" stroke="#9c6230" stroke-width="1.2" fill="#c98a48"/><circle cx="5" cy="17" r="1" fill="#6b4220"/><circle cx="43" cy="17" r="1" fill="#6b4220"/></g>'],
+  ['柚子', '<circle cx="24" cy="28" r="14" fill="#f4c430"/><path d="M24 42a14 14 0 0 0 14-14c-2 8-8 13-14 14z" fill="#dda21a"/><ellipse cx="18.5" cy="22.5" rx="3.2" ry="2.1" fill="#fff1a8" transform="rotate(-30 18.5 22.5)"/><g fill="#d39b12"><circle cx="27" cy="21" r=".9"/><circle cx="31" cy="27" r=".9"/><circle cx="22" cy="31" r=".9"/><circle cx="28" cy="34" r=".9"/><circle cx="17" cy="29" r=".9"/><circle cx="25" cy="26" r=".9"/><circle cx="33" cy="32" r=".9"/></g><path d="M24 14.5v-4" stroke="#6b4a1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M24.5 11c3-5.5 9.5-7 14-5-2 5-8.5 7-14 5z" fill="#4caf50"/><path d="M25.5 10.8c4-1.4 8-3 12-4.5" stroke="#2f7d32" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'],
+  ['川', '<rect x="3" y="3" width="42" height="42" rx="7" fill="#5fae5f"/><path d="M17 3C11 13 28 17 19 28c-6 8 4 12 2 17h13c2-6-9-9-2-17 8-10-8-15-2-25z" fill="#3a8ee6"/><path d="M22 10c2-1.2 4 1.2 6 0M20 22c2-1.2 4 1.2 6 0M22 36c2-1.2 4 1.2 6 0" stroke="#cdeaff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M8 14l1.5-3 1.5 3M38 32l1.5-3 1.5 3M9 36l1.5-3 1.5 3" stroke="#3f8a3f" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'],
+  ['山', '<path d="M20 41L33 18l13 23z" fill="#7f8fb8"/><path d="M33 18l-3.6 6.3 2.6-1 2 1.5 2.6-.6z" fill="#fff"/><path d="M2 41L17 12l15 29z" fill="#4f9a5a"/><path d="M17 12l-4.6 8.8 3-1.6 2.6 2 2.6-2.3 1.2 1.4z" fill="#fff"/>'],
+  ['枠', '<path d="M17 6l7-4.5 7 4.5" stroke="#d4a537" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="4" y="6" width="40" height="38" rx="2" fill="#d4a537"/><rect x="10" y="12" width="28" height="26" fill="#a8791f"/><rect x="12.5" y="14.5" width="23" height="21" fill="#1b1628"/><path d="M4 6l6 6M44 6l-6 6M4 44l6-6M44 44l-6-6" stroke="#a8791f" stroke-width="1.4"/><path d="M6 8h36" stroke="#f3d27a" stroke-width="1.2"/>'],
+  ['水', '<path d="M24 5c-7 11-14 17.5-14 25.5a14 14 0 0 0 28 0C38 22.5 31 16 24 5z" fill="#3fa9f5"/><path d="M10.6 34a14 14 0 0 0 26.8 0c-4 3-8.5 4.3-13.4 4.3S14.6 37 10.6 34z" fill="#2789d6"/><path d="M17 30.5a7.5 7.5 0 0 0 5.5 7.5" stroke="#d6efff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><ellipse cx="18.8" cy="24" rx="1.6" ry="2.6" fill="#d6efff"/>'],
+  ['ドア', '<rect x="10" y="3" width="28" height="42" rx="1.5" fill="#5c3418"/><rect x="13.5" y="6.5" width="21" height="38.5" fill="#a8622f"/><rect x="16.5" y="10" width="15" height="12" rx="1" fill="#8c4f24"/><rect x="16.5" y="26" width="15" height="15" rx="1" fill="#8c4f24"/><circle cx="31" cy="24" r="1.9" fill="#f2c94c"/><path d="M6 45h36" stroke="#3a2a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>'],
+];
 const KEY_LEN = 3;
 function askPassword(){
   let seq = [], busy = false;
