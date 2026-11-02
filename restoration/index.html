@@ -106,6 +106,9 @@ button.condbtn{width:100%;padding:12px;font-size:.95rem;font-weight:700;color:va
 .unlocked.failed .seal{border-color:var(--ng);box-shadow:0 0 40px rgba(255,107,138,.25)}
 .unlocked.failed .seal svg{stroke:var(--ng)}
 .unlocked.failed h2{color:var(--ng)}
+.stepjump{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stepjump button{font-family:var(--f-display);font-weight:800;font-size:1.25rem;letter-spacing:.06em;padding:16px 8px;background:var(--bg);color:var(--purple);border:1px solid var(--purple)}
+.stepjump button:first-child{background:var(--purple);color:var(--on-purple)}
 .loginbadge{user-select:none;-webkit-user-select:none;touch-action:manipulation;cursor:default;-webkit-tap-highlight-color:transparent}
 .loginbadge.on.adn{border-color:var(--ng);background:rgba(255,107,138,.12)}
 .loginbadge.on.adn::before{background:var(--ng)}
@@ -325,8 +328,9 @@ function show2FAResult(ok, s, fresh){
 }
 
 // ===== 最初からやり直す =====
-function resetAll(){
-  play = { step:1, notes:[] }; store.set(PKEY, play);
+function resetAll(startStep){
+  const st = Number.isInteger(startStep) ? startStep : 1;
+  play = { step:st, notes:[] }; store.set(PKEY, play);
   role = null; store.set(RKEY, null);
   unlocked = false; store.set(LKEY, false);
   store.set(TKEY, null);
@@ -341,11 +345,12 @@ badge.addEventListener('click', () => {
   tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
   if (tapCount < 10) return;
   tapCount = 0;
-  showScan(`<div class="top"><span class="eyebrow">CREATOR MENU</span><h2>最初からやり直す</h2></div>
-    <p class="body" style="text-align:center">進み具合・ログイン・ロックの状態をすべて消して、STEP1に戻します。</p>
-    <div class="row"><button class="sub" id="crNo" type="button">やめる</button><button class="primary" id="crYes" type="button">最初に戻す</button></div>`);
+  showScan(`<div class="top"><span class="eyebrow">CREATOR MENU</span><h2>製作者メニュー</h2></div>
+    <p class="ask">始めるSTEPを選んでください。<br>進み具合・ログイン・ロックの状態はリセットされます。</p>
+    <div class="stepjump">${CONFIG.steps.map((_, i) => `<button type="button" data-jump="${i + 1}">STEP${i + 1}</button>`).join('')}</div>
+    <div class="row"><button class="sub" id="crNo" type="button">やめる</button></div>`);
   document.getElementById('crNo').onclick = closeScan;
-  document.getElementById('crYes').onclick = resetAll;
+  document.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => resetAll(+b.dataset.jump));
   document.getElementById('crNo').focus();
 });
 
