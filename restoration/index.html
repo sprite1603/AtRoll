@@ -479,8 +479,7 @@ function decodeCanvas(c, ctx){
 }
 async function openCamera(){
   if (!navigator.mediaDevices?.getUserMedia){ document.getElementById('qrfile').click(); return; }
-  showScan(`<p class="eyebrow" style="text-align:center">QRコードをカメラに映してください</p>
-    <div class="cam"><video id="camVideo" playsinline muted></video><div class="frame"></div></div>
+  showScan(`<div class="cam"><video id="camVideo" playsinline muted></video><div class="frame"></div></div>
     <p class="ask" id="camMsg">カメラを起動しています…</p>
     <div class="row"><label class="sub" for="qrfile" id="camPhoto">写真で読み取る</label><button class="sub" id="camClose" type="button">閉じる</button></div>`);
   const close = () => { stopCamera(); document.getElementById('scanModal')?.remove(); if (!document.getElementById('modal')) document.body.style.overflow = ''; };
