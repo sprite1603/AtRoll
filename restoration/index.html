@@ -106,6 +106,7 @@ button.condbtn{width:100%;padding:12px;font-size:.95rem;font-weight:700;color:va
 .unlocked.failed .seal{border-color:var(--ng);box-shadow:0 0 40px rgba(255,107,138,.25)}
 .unlocked.failed .seal svg{stroke:var(--ng)}
 .unlocked.failed h2{color:var(--ng)}
+.loginbadge{user-select:none;-webkit-user-select:none;touch-action:manipulation;cursor:default;-webkit-tap-highlight-color:transparent}
 .loginbadge.on.adn{border-color:var(--ng);background:rgba(255,107,138,.12)}
 .loginbadge.on.adn::before{background:var(--ng)}
 .loginbadge.on{border-color:var(--purple);color:var(--ink);background:var(--purple-soft)}
@@ -323,6 +324,31 @@ function show2FAResult(ok, s, fresh){
   };
 }
 
+// ===== 最初からやり直す =====
+function resetAll(){
+  play = { step:1, notes:[] }; store.set(PKEY, play);
+  role = null; store.set(RKEY, null);
+  unlocked = false; store.set(LKEY, false);
+  store.set(TKEY, null);
+  closeScan(); document.getElementById('modal')?.remove(); document.body.style.overflow = '';
+  renderBadge(); renderPlay();
+}
+// 製作者用：右上のログイン表示を続けて10回押すと、やり直しの確認が出る
+let tapCount = 0, tapTimer = null;
+badge.addEventListener('click', () => {
+  tapCount++;
+  clearTimeout(tapTimer);
+  tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
+  if (tapCount < 10) return;
+  tapCount = 0;
+  showScan(`<div class="top"><span class="eyebrow">CREATOR MENU</span><h2>最初からやり直す</h2></div>
+    <p class="body" style="text-align:center">進み具合・ログイン・ロックの状態をすべて消して、STEP1に戻します。</p>
+    <div class="row"><button class="sub" id="crNo" type="button">やめる</button><button class="primary" id="crYes" type="button">最初に戻す</button></div>`);
+  document.getElementById('crNo').onclick = closeScan;
+  document.getElementById('crYes').onclick = resetAll;
+  document.getElementById('crNo').focus();
+});
+
 // 管理者だけが見られるクリア条件
 function showCondition(){
   showScan(`<div class="top"><span class="eyebrow">ADMIN ONLY</span></div>
@@ -420,7 +446,7 @@ function renderPlay(flash){
   const reset = document.getElementById('reset');
   if (reset) reset.onclick = () => {
     document.getElementById('resetRow').innerHTML = '最初に戻しますか？ <button class="sub" id="yes" type="button">戻す</button><button class="sub" id="no" type="button">やめる</button>';
-    document.getElementById('yes').onclick = () => { play = { step:1, notes:[] }; store.set(PKEY, play); role = null; store.set(RKEY, null); unlocked = false; store.set(LKEY, false); store.set(TKEY, null); renderBadge(); renderPlay(); };
+    document.getElementById('yes').onclick = resetAll;
     document.getElementById('no').onclick = () => renderPlay();
   };
   const ta = document.getElementById('toAdmin'); if (ta) ta.onclick = openAdmin;
