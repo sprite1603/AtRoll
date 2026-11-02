@@ -3,7 +3,7 @@
 :root{
   --bg:#0b0a10; --panel:#15121f; --line:#2c2540; --ink:#ece8f6; --muted:#9a91b3;
   --purple:#9b6dff; --purple-soft:#2a1f47; --ng:#ff6b8a; --on-purple:#0b0a10;
-  --scrim:rgba(6,4,12,.55); --glow:rgba(155,109,255,.25);
+  --key:#1b1628; --scrim:rgba(6,4,12,.55); --glow:rgba(155,109,255,.25);
   --f-display:"Shippori Mincho B1","Hiragino Mincho ProN",serif;
   --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,monospace;
@@ -78,6 +78,18 @@ button.lockbtn.opened{box-shadow:none;color:var(--muted);border-color:var(--line
 .loginbadge{position:fixed;z-index:5;top:calc(12px + env(safe-area-inset-top, 0px));right:12px;font-size:.78rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
 button.condbtn{width:100%;padding:12px;font-size:.95rem;font-weight:700;color:var(--ink);border-color:var(--ng)}
 .modal .body.cond{text-align:center;font-family:var(--f-display);font-weight:800;font-size:1.3rem;line-height:1.8}
+.pins{display:flex;justify-content:center;gap:12px}
+.pins i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--purple)}
+.pins i.on{background:var(--purple);box-shadow:0 0 10px var(--glow)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:330px;margin-inline:auto}
+.keypad .key{aspect-ratio:1/1;padding:12%;background:var(--bg);border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;color:var(--ink);
+  transition:border-color .15s,background .15s}
+.keypad .key:hover{border-color:var(--purple);filter:none}
+.keypad .key svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.keypad .key svg .dot{fill:currentColor;stroke:none}
+.keypad .key.hit{animation:hit .25s ease-out}
+@keyframes hit{0%{background:var(--purple-soft);border-color:var(--purple);transform:scale(.94)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.keypad .key.hit{animation:none}}
 .modal .once{margin:0;text-align:center;color:var(--ng);font-weight:700;font-size:.95rem}
 .unlocked.failed .seal{border-color:var(--ng);box-shadow:0 0 40px rgba(255,107,138,.25)}
 .unlocked.failed .seal svg{stroke:var(--ng)}
@@ -112,7 +124,7 @@ a.openlink{display:block;text-align:center;font-weight:700;padding:14px;border-r
 .modal .body{margin:0;font-size:1.15rem;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;border-block:1px solid var(--line);padding-block:20px}
 .modal .ask{margin:0;text-align:center;color:var(--muted);font-size:.9rem}
 .reopen{background:var(--purple-soft);color:var(--ink);border:1px solid var(--purple);font-weight:400;font-size:.9rem}
-</style><script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" id="qrlib"></script><script type="application/json" id="config">{"salt":"98acf7ea01c415c5","steps":[{"fields":["A","B"],"check":"f1f27f7f4b564b1c68e334ba96c5912e3c18303d856ebcd9169f77446e646226","iv":"4MFyGnsI/vVTrFiK","ct":"yTiGdSan9xTQn+xyW5b0SJjeyX691I42+u3rIJiXtMcux8tcZ9DbUmDHa1gdNZqdWOX+1AueiK5hjmQyue7bPTcuS3gNNXKo0vS3Xvll4+LCQQ=="},{"fields":["C","D","E"],"check":"fad856fc00e55b276aaa540f5bb69c39973a25adc2842ea914ce35a566dc53ff","iv":"1ykTxoUaZU+7AWU7","ct":"xklA6i1KWJDep7GlcCSUfvo2Ax9mZ2SnRm13rrCAZgKu24TZJqPWi6+pnLYBxZYDjJj0Xyqt1n7vu33BvD13KryJBJi774A6/oO7ZSFPCPgI3g=="},{"fields":["F","G","H"],"check":"35b2eebabe1f10d553016c370e8818e6073e95e1eb9e9dde07363a5c5b2d08bc","iv":"FGLlfdP8SR/kL4+H","ct":"tpx5HLUImITX97KqEqIEDW3OqqSO4XEBfHKsoRNIDpsnlqywqSH6gkBE6ifOeF1psOKBiLkz/xh1X/26z/Ko4+PWDTVSuDzKERpGhH/7thRasg=="},{"fields":["I"],"check":"0147d6a0f19846aba64344b5b7a85db6fd13004f84ae264de565f0e2116bf1c0","iv":"qS0YYd8EVu4Om3Jn","ct":"k4kvPzL7NoiipvW15BhEidPlZHpR8o82OPkV5k8CLA1lAtPQNoThnRrVTfRstEQyAuuP6lvmUAyNE43KeS1Ai8e/VI3FdjFyZuwB1aVyUP02CkY5QG/Vh8MYei3kfr1qoOr9ATSoLlAK0bf+ZDGh"}],"lock":{"step":4,"check":"666cc4acda48ca3bd327317922c4f74fbf8a8ae716359d6582d6270959c7deec"},"twofa":{"step":4,"ok":"7fedc79023334cdeeee850c44ca3d5b5e4370d6ffa82067707a04a16801b21b1"}}</script><script id="app">
+</style><script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" id="qrlib"></script><script type="application/json" id="config">{"salt":"98acf7ea01c415c5","steps":[{"fields":["A","B"],"check":"f1f27f7f4b564b1c68e334ba96c5912e3c18303d856ebcd9169f77446e646226","iv":"4MFyGnsI/vVTrFiK","ct":"yTiGdSan9xTQn+xyW5b0SJjeyX691I42+u3rIJiXtMcux8tcZ9DbUmDHa1gdNZqdWOX+1AueiK5hjmQyue7bPTcuS3gNNXKo0vS3Xvll4+LCQQ=="},{"fields":["C","D","E"],"check":"fad856fc00e55b276aaa540f5bb69c39973a25adc2842ea914ce35a566dc53ff","iv":"1ykTxoUaZU+7AWU7","ct":"xklA6i1KWJDep7GlcCSUfvo2Ax9mZ2SnRm13rrCAZgKu24TZJqPWi6+pnLYBxZYDjJj0Xyqt1n7vu33BvD13KryJBJi774A6/oO7ZSFPCPgI3g=="},{"fields":["F","G","H"],"check":"35b2eebabe1f10d553016c370e8818e6073e95e1eb9e9dde07363a5c5b2d08bc","iv":"FGLlfdP8SR/kL4+H","ct":"tpx5HLUImITX97KqEqIEDW3OqqSO4XEBfHKsoRNIDpsnlqywqSH6gkBE6ifOeF1psOKBiLkz/xh1X/26z/Ko4+PWDTVSuDzKERpGhH/7thRasg=="},{"fields":["I"],"check":"0147d6a0f19846aba64344b5b7a85db6fd13004f84ae264de565f0e2116bf1c0","iv":"qS0YYd8EVu4Om3Jn","ct":"k4kvPzL7NoiipvW15BhEidPlZHpR8o82OPkV5k8CLA1lAtPQNoThnRrVTfRstEQyAuuP6lvmUAyNE43KeS1Ai8e/VI3FdjFyZuwB1aVyUP02CkY5QG/Vh8MYei3kfr1qoOr9ATSoLlAK0bf+ZDGh"}],"lock":{"step":4,"check":"ad99a9025245e6aeac068cc3ebce090617c83d06ee2aaa3ed274ed2a8d99bdae"},"twofa":{"step":4,"ok":"7fedc79023334cdeeee850c44ca3d5b5e4370d6ffa82067707a04a16801b21b1"}}</script><script id="app">
 (() => {
 const CONFIG = JSON.parse(document.getElementById('config').textContent);
 const te = new TextEncoder(), td = new TextDecoder();
@@ -193,29 +205,51 @@ async function pwCheck(pw){
   const buf = await crypto.subtle.digest('SHA-256', te.encode(CONFIG.salt + '|lock|' + pw.normalize('NFKC').trim()));
   return hex(new Uint8Array(buf));
 }
+// キーパッド。左上から順に 0〜8。押した順番（例「3,2,6」）を照合する
+const KEYPAD = [
+  ['熊', '<circle cx="13" cy="14" r="5.5" FILL/><circle cx="35" cy="14" r="5.5" FILL/><circle cx="24" cy="27" r="14" FILL/><ellipse cx="24" cy="32" rx="6.5" ry="5" FILL/><circle cx="18.5" cy="24" r="1.6" class="dot"/><circle cx="29.5" cy="24" r="1.6" class="dot"/><path d="M22 30.5h4"/><path d="M24 30.5v3"/>'],
+  ['鯛', '<path d="M5 25c6-10 19-13 29-6l7-6v24l-7-6c-10 7-23 4-29-6z" FILL/><circle cx="12.5" cy="23" r="1.6" class="dot"/><path d="M17 18.5c2.5 3.5 2.5 9 0 12.5"/><path d="M15 16l3-4.5 3.5 3.5 3.5-4.5 3.5 3.5 3.5-3"/><path d="M5 25h3"/>'],
+  ['板', '<path d="M5 19l8-5h30l-8 5z" FILL/><rect x="5" y="19" width="30" height="13" FILL/><path d="M35 19l8-5v13l-8 5"/><path d="M9 23.5c5-1.5 9 1.5 14 0s7-1 9 0M9 28c4 1 8-1 12 0s7 1 10-.5"/><ellipse cx="26" cy="25.5" rx="2.2" ry="1.4"/>'],
+  ['柚子', '<circle cx="24" cy="28" r="13" FILL/><path d="M24 15v-4"/><path d="M24 12c3-5 9-6.5 13-4.5-2 4.5-8 6.5-13 4.5z" FILL/><circle cx="19" cy="24" r=".9" class="dot"/><circle cx="27" cy="22" r=".9" class="dot"/><circle cx="30" cy="30" r=".9" class="dot"/><circle cx="21" cy="32" r=".9" class="dot"/><circle cx="25" cy="27.5" r=".9" class="dot"/><circle cx="17" cy="29.5" r=".9" class="dot"/>'],
+  ['川', '<path d="M5 15c4.5-3.5 8.5 3.5 13 0s8.5-3.5 13 0 8.5 3.5 12 0"/><path d="M5 24c4.5-3.5 8.5 3.5 13 0s8.5-3.5 13 0 8.5 3.5 12 0"/><path d="M5 33c4.5-3.5 8.5 3.5 13 0s8.5-3.5 13 0 8.5 3.5 12 0"/>'],
+  ['山', '<path d="M3 39l15-24 8 12 6-8 13 20z" FILL/><path d="M12.5 24.5l5.5 3 4-3"/><path d="M28.5 23.5l3.5 2 2.5-2"/>'],
+  ['枠', '<rect x="7" y="7" width="34" height="34" rx="1" FILL/><rect x="14" y="14" width="20" height="20"/><path d="M7 7l7 7M41 7l-7 7M7 41l7-7M41 41l-7-7"/>'],
+  ['水', '<path d="M24 6c-6.5 10-13 16.5-13 24a13 13 0 0 0 26 0c0-7.5-6.5-14-13-24z" FILL/><path d="M17.5 31a7 7 0 0 0 5.5 6.5"/>'],
+  ['ドア', '<path d="M6 42h36"/><rect x="13" y="6" width="22" height="36" rx="1" FILL/><rect x="17" y="10" width="11" height="11"/><rect x="17" y="26" width="11" height="12"/><circle cx="31.5" cy="24" r="1.6" class="dot"/>'],
+].map(([name, svg]) => [name, svg.replaceAll('FILL', 'style="fill:var(--key)"')]);
+const KEY_LEN = 3;
 function askPassword(){
+  let seq = [], busy = false;
   showScan(`<div class="top"><span class="eyebrow">SECURITY LOCK</span><h2>厳重ロック解除</h2></div>
-    <form class="answer" id="pwForm" novalidate>
-      <input id="pw" type="password" autocomplete="off" placeholder="パスワードを入力" aria-label="パスワード">
-      <button class="primary" type="submit">解除する</button>
-    </form>
+    <div class="pins" id="pins" aria-hidden="true">${'<i></i>'.repeat(KEY_LEN)}</div>
+    <div class="keypad" id="keypad" role="group" aria-label="キーパッド">
+      ${KEYPAD.map(([name, svg], i) => `<button type="button" class="key" data-k="${i}" aria-label="${name}"><svg viewBox="0 0 48 48" aria-hidden="true">${svg}</svg></button>`).join('')}
+    </div>
     <p class="msg" id="pwMsg" aria-live="polite"></p>
-    <div class="row"><button class="sub" id="pwCancel" type="button">やめる</button></div>`);
-  const form = document.getElementById('pwForm'), input = document.getElementById('pw'), msg = document.getElementById('pwMsg');
-  input.focus();
+    <div class="row"><button class="sub" id="pwClear" type="button">入力を消す</button><button class="sub" id="pwCancel" type="button">やめる</button></div>`);
+  const pad = document.getElementById('keypad'), pins = [...document.querySelectorAll('#pins i')], msg = document.getElementById('pwMsg');
+  const paint = () => pins.forEach((p, k) => p.classList.toggle('on', k < seq.length));
+  const clear = () => { seq = []; paint(); };
   document.getElementById('pwCancel').onclick = closeScan;
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    if (!input.value.trim()){ msg.className = 'msg ng'; msg.textContent = 'パスワードを入力してください'; return; }
-    if (await pwCheck(input.value) !== CONFIG.lock.check){
+  document.getElementById('pwClear').onclick = () => { clear(); msg.textContent = ''; };
+  pad.querySelector('.key').focus();
+  pad.querySelectorAll('.key').forEach(b => b.addEventListener('click', async () => {
+    if (busy) return;
+    msg.textContent = ''; msg.className = 'msg';
+    b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit');
+    seq.push(+b.dataset.k); paint();
+    if (seq.length < KEY_LEN) return;
+    busy = true;
+    if (await pwCheck(seq.join(',')) !== CONFIG.lock.check){
       msg.className = 'msg ng'; msg.textContent = 'パスワードが違います';
-      form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
-      input.select(); return;
+      pad.classList.remove('shake'); void pad.offsetWidth; pad.classList.add('shake');
+      setTimeout(() => { clear(); busy = false; }, 600);
+      return;
     }
     unlocked = true; store.set(LKEY, true);
     renderPlay();
     showUnlocked(true);
-  });
+  }));
 }
 function showUnlocked(fresh){
   showScan(`<div class="unlocked ${fresh ? 'fresh' : ''}">
