@@ -323,6 +323,18 @@ function show2FAResult(ok, s, fresh){
   };
 }
 
+function showAdminOnly(){
+  if (document.getElementById('scanModal')) return;
+  showScan(`<div class="unlocked failed fresh">
+      <div class="seal">${LOCK_SVG}</div>
+      <span class="eyebrow">ACCESS DENIED</span>
+      <p class="body cond">管理者以外は入力不可です</p>
+    </div>
+    <button class="primary" id="aoClose" type="button">閉じる</button>`);
+  const btn = document.getElementById('aoClose'); btn.focus();
+  btn.onclick = closeScan;
+}
+
 // 管理者だけが見られるクリア条件
 function showCondition(){
   showScan(`<div class="top"><span class="eyebrow">ADMIN ONLY</span></div>
@@ -374,8 +386,17 @@ function renderPlay(flash){
     const inputs = [...form.querySelectorAll('input.ans')], msg = document.getElementById('msg');
     const labels = fieldsOf(CONFIG.steps[s - 1]);
     const show = (t, x) => { msg.className = 'msg ' + t; msg.textContent = x; };
+    // 2段階認証のSTEPは管理者だけが入力できる
+    const adminOnly = CONFIG.twofa && s === CONFIG.twofa.step && role !== 'adn';
+    if (adminOnly){
+      inputs.forEach(x => {
+        x.readOnly = true;
+        x.addEventListener('focus', () => { x.blur(); showAdminOnly(); });
+      });
+    }
     form.addEventListener('submit', async e => {
       e.preventDefault();
+      if (adminOnly) return showAdminOnly();
       const vals = inputs.map(x => norm(x.value));
       for (let k = 0; k < vals.length; k++){
         const name = labels.length ? `${labels[k]}の` : '';
