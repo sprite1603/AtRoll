@@ -481,17 +481,22 @@ async function openCamera(){
   if (!navigator.mediaDevices?.getUserMedia){ document.getElementById('qrfile').click(); return; }
   showScan(`<div class="cam"><video id="camVideo" playsinline muted></video><div class="frame"></div></div>
     <p class="ask" id="camMsg">カメラを起動しています…</p>
-    <div class="row"><label class="sub" for="qrfile" id="camPhoto">写真で読み取る</label><button class="sub" id="camClose" type="button">閉じる</button></div>`);
+    <div class="row" id="camRow"><button class="sub" id="camClose" type="button">閉じる</button></div>`);
   const close = () => { stopCamera(); document.getElementById('scanModal')?.remove(); if (!document.getElementById('modal')) document.body.style.overflow = ''; };
   document.getElementById('camClose').onclick = close;
-  document.getElementById('camPhoto').addEventListener('click', () => setTimeout(close, 0));
   try {
     camStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' } }, audio:false });
   } catch(e){
     const m = document.getElementById('camMsg');
     if (m) m.textContent = (e && e.name === 'NotAllowedError')
-      ? 'カメラの使用が許可されていません。ブラウザの設定でカメラを許可するか、「写真で読み取る」を使ってください。'
-      : 'この環境ではカメラを使えません。「写真で読み取る」を使ってください。';
+      ? 'カメラの使用が許可されていません。ブラウザの設定でカメラを許可するか、写真から読み取ってください。'
+      : 'この環境ではカメラを使えません。写真から読み取ってください。';
+    // カメラが使えないときだけ、写真から読み取るボタンを出す
+    const row = document.getElementById('camRow');
+    if (row){
+      row.insertAdjacentHTML('afterbegin', '<label class="sub" for="qrfile" id="camPhoto">写真で読み取る</label>');
+      document.getElementById('camPhoto').addEventListener('click', () => setTimeout(close, 0));
+    }
     document.querySelector('#scanModal .cam')?.remove();
     return;
   }
