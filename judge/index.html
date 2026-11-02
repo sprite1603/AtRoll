@@ -76,6 +76,8 @@ button.lockbtn.opened{box-shadow:none;color:var(--muted);border-color:var(--line
 @keyframes seal{0%{transform:scale(.4) rotate(-20deg);opacity:0}60%{transform:scale(1.12) rotate(4deg);opacity:1}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){.unlocked.fresh .seal{animation:none}}
 .loginbadge{position:fixed;z-index:5;top:calc(12px + env(safe-area-inset-top, 0px));right:12px;font-size:.78rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+.loginbadge.on.adn{border-color:var(--ng);background:rgba(255,107,138,.12)}
+.loginbadge.on.adn::before{background:var(--ng)}
 .loginbadge.on{border-color:var(--purple);color:var(--ink);background:var(--purple-soft)}
 .loginbadge.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--purple);margin-right:7px;vertical-align:1px}
 label.fld{display:grid;grid-template-columns:2.2em 1fr;align-items:center;gap:10px}
@@ -149,14 +151,15 @@ const root = document.createElement('div'); root.className = 'wrap'; document.bo
 
 // ===== ログイン状態 =====
 // QRコードの内容に応じた処理。内容（前後の空白は無視）→ 処理
-const ROLES = { participant:'参加者' };
+// QRコードの内容 → ログインする立場。URLの末尾には「#内容」が付く
+const ROLES = { participant:'参加者', adn:'管理者' };
 const RKEY = 'nazo-role-' + CONFIG.salt;
 let role = store.get(RKEY);
 if (!ROLES[role]) role = null;
 const badge = document.createElement('div'); badge.className = 'loginbadge'; badge.setAttribute('aria-live', 'polite');
 document.body.appendChild(badge);
 function renderBadge(){
-  badge.className = 'loginbadge' + (role ? ' on' : '');
+  badge.className = 'loginbadge' + (role ? ' on ' + role : '');
   badge.textContent = role ? `${ROLES[role]}としてログイン` : '未ログイン';
   // ログイン中はURLの末尾に「#participant」などを付ける（URLを開いただけではログインしない）
   const want = role ? '#' + role : '';
@@ -166,13 +169,12 @@ function renderBadge(){
 }
 function login(r){ role = r; store.set(RKEY, r); renderBadge(); }
 renderBadge();
-const QR_ACTIONS = {
-  participant: () => {
-    login('participant');
-    renderPlay();
-    showScan(`<div class="top"><h2>ログインしました</h2></div><p class="body" style="text-align:center">参加者としてログインしました。</p>`, true);
-  },
+const loginAction = r => () => {
+  login(r);
+  renderPlay();
+  showScan(`<div class="top"><h2>ログインしました</h2></div><p class="body" style="text-align:center">${ROLES[r]}としてログインしました。</p>`, true);
 };
+const QR_ACTIONS = Object.fromEntries(Object.keys(ROLES).map(r => [r, loginAction(r)]));
 let canEdit = false, artifactApi = null;
 
 // ===== 厳重ロック =====
