@@ -158,6 +158,11 @@ document.body.appendChild(badge);
 function renderBadge(){
   badge.className = 'loginbadge' + (role ? ' on' : '');
   badge.textContent = role ? `${ROLES[role]}としてログイン` : '未ログイン';
+  // ログイン中はURLの末尾に「#participant」などを付ける（URLを開いただけではログインしない）
+  const want = role ? '#' + role : '';
+  if (location.hash !== want){
+    try { history.replaceState(null, '', location.pathname + location.search + want); } catch(e){}
+  }
 }
 function login(r){ role = r; store.set(RKEY, r); renderBadge(); }
 renderBadge();
