@@ -348,7 +348,7 @@ function renderPlay(flash){
       : `<button class="scan" id="scanBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM14 14h2v2h-2z"/></svg>ログイン</button>`) : ''}
     ${role === 'adn' ? '<button class="sub condbtn" id="condBtn" type="button">クリア条件</button>' : ''}
     <input type="file" id="qrfile" accept="image/*" capture="environment" hidden>
-    <div class="row" id="resetRow">${s > 1 ? '<button class="sub" id="reset" type="button">最初からやり直す</button>' : ''}${canEdit ? '<button class="sub" id="toAdmin" type="button">管理画面</button>' : ''}</div>
+    <div class="row" id="resetRow">${s > 1 && (role === 'adn' || canEdit) ? '<button class="sub" id="reset" type="button">最初からやり直す</button>' : ''}${canEdit ? '<button class="sub" id="toAdmin" type="button">管理画面</button>' : ''}</div>
   </div>`;
   const form = document.getElementById('form');
   if (form){
