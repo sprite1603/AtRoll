@@ -1,0 +1,436 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style></head><body><title>謎解き解答判定</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap"><style id="app-style">
+/* Layout: 画面中央に1枚のパネル。上にSTEP表示、指示文、解答欄。黒地に紫で統一（単一テーマ） */
+:root{
+  --bg:#0b0a10; --panel:#15121f; --line:#2c2540; --ink:#ece8f6; --muted:#9a91b3;
+  --purple:#9b6dff; --purple-soft:#2a1f47; --ng:#ff6b8a; --on-purple:#0b0a10;
+  --scrim:rgba(6,4,12,.86); --glow:rgba(155,109,255,.25);
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN",serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;
+  background-image:radial-gradient(ellipse at 50% 0%, var(--purple-soft), transparent 60%);background-repeat:no-repeat}
+.wrap{min-height:100vh;box-sizing:border-box;display:grid;place-items:center;padding-inline:16px;padding-block:32px}
+.panel{width:100%;max-width:460px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:32px 24px;display:flex;flex-direction:column;gap:22px;box-sizing:border-box}
+.panel.wide{max-width:640px}
+.steps{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.steps i{width:28px;height:4px;border-radius:2px;background:var(--line)}
+.steps i.done{background:var(--purple)}
+.steps i.now{background:var(--purple);opacity:.45}
+.label{text-align:center;display:flex;flex-direction:column;gap:2px}
+.label small,.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.3em;color:var(--muted)}
+.label h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:3rem;line-height:1.1;color:var(--purple);letter-spacing:.06em}
+.note{border:1px solid var(--purple);background:var(--purple-soft);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.note p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+form.answer{display:flex;flex-direction:column;gap:12px}
+input,textarea{font:inherit;padding:12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);box-sizing:border-box;width:100%}
+textarea{resize:vertical;min-height:88px;line-height:1.6}
+input:disabled,textarea:disabled{color:var(--muted)}
+#answer{font-size:1.2rem;text-align:center;letter-spacing:.1em}
+#answer::placeholder{letter-spacing:0;font-size:1rem}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+input:focus,textarea:focus{outline:none;border-color:var(--purple)}
+button{font:inherit;font-weight:700;padding:12px 16px;border:0;border-radius:6px;background:var(--purple);color:var(--on-purple);cursor:pointer}
+button.primary{letter-spacing:.2em;font-size:1rem;padding:14px}
+button:hover{filter:brightness(1.1)}
+button:disabled{opacity:.5;cursor:default;filter:none}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+button.sub{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:400;font-size:.85rem;padding:8px 12px}
+button.sub:hover{color:var(--ink);border-color:var(--purple)}
+.msg{margin:0;min-height:1.7em;text-align:center;font-size:.95rem}
+.msg.ng{color:var(--ng)} .msg.ok{color:var(--purple)}
+.row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.row.end{justify-content:flex-end}
+details.hist{font-size:.85rem;color:var(--muted)}
+details.hist summary{cursor:pointer}
+details.hist ol{margin:8px 0 0;padding-left:1.4em;display:flex;flex-direction:column;gap:8px}
+details.hist li p{margin:0;white-space:pre-wrap;color:var(--ink);overflow-wrap:anywhere}
+.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.flash{animation:flash .5s ease-out}
+@keyframes flash{from{transform:scale(1.15);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.shake,.flash{animation:none}}
+.clear{text-align:center;display:flex;flex-direction:column;gap:6px}
+.clear h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:2.8rem;color:var(--purple);letter-spacing:.1em}
+.adminhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.adminhead h1{margin:0;font-family:var(--f-display);font-size:1.6rem;color:var(--purple)}
+.lead{margin:0;color:var(--muted);font-size:.85rem}
+.stepedit{border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.stepedit header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.stepedit h2{margin:0;font-family:var(--f-display);font-size:1.15rem;color:var(--purple);letter-spacing:.05em}
+.stepedit label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted)}
+.state{font-size:.75rem;padding:2px 8px;border-radius:10px;border:1px solid var(--line);color:var(--muted)}
+.state.on{border-color:var(--purple);color:var(--purple)}
+.empty{text-align:center;color:var(--muted);margin:0}
+label.fld{display:grid;grid-template-columns:2.2em 1fr;align-items:center;gap:10px}
+label.fld span{font-family:var(--f-display);font-weight:800;font-size:1.5rem;color:var(--purple);text-align:center}
+input.ans{font-size:1.2rem;text-align:center;letter-spacing:.1em}
+input.ans::placeholder{letter-spacing:0;font-size:1rem}
+button.scan,label.scan{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1px dashed var(--purple);border-radius:6px;color:var(--ink);cursor:pointer;font-weight:700}
+button.scan:hover,label.scan:hover{background:var(--purple-soft)}
+button.scan svg,label.scan svg{width:22px;height:22px;fill:none;stroke:var(--purple);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+label.sub{background:transparent;color:var(--muted);border:1px solid var(--line);font-size:.85rem;padding:8px 12px;border-radius:6px;cursor:pointer}
+label.sub:hover{color:var(--ink);border-color:var(--purple)}
+a.openlink{display:block;text-align:center;font-weight:700;padding:14px;border-radius:6px;background:var(--purple);color:var(--on-purple);text-decoration:none;letter-spacing:.1em}
+.modal .body{word-break:break-all}
+.cam{position:relative;width:100%;aspect-ratio:1/1;max-width:100%;background:#000;border-radius:8px;overflow:hidden}
+.cam video{width:100%;height:100%;object-fit:cover;display:block}
+.cam .frame{position:absolute;inset:18%;border:2px solid var(--purple);border-radius:10px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.ansgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.modal{position:fixed;inset:0;z-index:10;background:var(--scrim);display:grid;place-items:center;overflow-y:auto;
+  padding:calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));backdrop-filter:blur(6px)}
+.modal .card{width:100%;max-width:560px;box-sizing:border-box;background:var(--panel);border:1px solid var(--purple);border-radius:10px;padding:36px 28px;display:flex;flex-direction:column;gap:20px;
+  box-shadow:0 0 0 1px var(--purple-soft),0 24px 80px var(--glow);animation:pop .35s ease-out}
+@keyframes pop{from{transform:translateY(12px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.modal .card{animation:none}}
+.modal .top{display:flex;flex-direction:column;gap:4px;text-align:center}
+.modal h2{margin:0;font-family:var(--f-display);font-weight:800;font-size:2rem;color:var(--purple);letter-spacing:.08em}
+.modal .body{margin:0;font-size:1.15rem;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;border-block:1px solid var(--line);padding-block:20px}
+.modal .ask{margin:0;text-align:center;color:var(--muted);font-size:.9rem}
+.reopen{background:var(--purple-soft);color:var(--ink);border:1px solid var(--purple);font-weight:400;font-size:.9rem}
+</style><script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" id="qrlib"></script><script type="application/json" id="config">{"salt":"98acf7ea01c415c5","steps":[{"fields":["A","B"],"check":"f1f27f7f4b564b1c68e334ba96c5912e3c18303d856ebcd9169f77446e646226","iv":"bQM8i4Q0ZpDrWeUM","ct":"rirKehqczRUiOpB+jbmehLsXF0Jxc4wqyuUkSnDCPKtaU0lobbdckIXp8WVHlGb1Z4PJdJVApUdfAV6xa8gTaE2b"},{"fields":["C","D","E"],"check":"fad856fc00e55b276aaa540f5bb69c39973a25adc2842ea914ce35a566dc53ff","iv":"2PdpIhrMsD8WHCk+","ct":"b9F5EeIGLrvIrk4zbDiUAz4LVBEor6TFs1dw61onfVr90k/NHM9FBk0GXLs693S4uj9ySGgNo9Gp20MQt5sz1q7v1ht/MwihuW6Tta3z5xEHFN+W8UytLoD3RaD2bKU9Pmul9h6i30ga"},{"fields":["F","G","H"],"check":"35b2eebabe1f10d553016c370e8818e6073e95e1eb9e9dde07363a5c5b2d08bc","iv":"l2BSHW3UK3gVWqKG","ct":"0/ZdAkGSgJBcf16jXr9rDL/4fvCvMTGpuTM8n6SGLybfckCw2SKZrXl+iid/rR5/3okzNVcJ1bLLymYmeHjlNyHHl+nldR8aDdDrgjB2fBnasyL/oYD8sVMKrrESm4LdY7VE43QQfGDwllTEQVRulrhthIIfsw=="}]}</script><script id="app">
+(() => {
+const CONFIG = JSON.parse(document.getElementById('config').textContent);
+const te = new TextEncoder(), td = new TextDecoder();
+const hex = b => [...b].map(x => x.toString(16).padStart(2,'0')).join('');
+const b64 = b => btoa(String.fromCharCode(...b));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const norm = s => s.normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)).replace(/\s/g, '');
+const isKana = s => /^[ぁ-ゖー]+$/.test(s);
+// 解答欄が複数あるSTEPは fields に欄の名前を持つ。正解は各欄の答えを「|」でつないだもの
+const fieldsOf = entry => Array.isArray(entry?.fields) ? entry.fields : [];
+const parseFields = s => s.split(/[,、，]/).map(x => x.trim()).filter(Boolean);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// 正解から「照合用の値」と「指示文の鍵」を作る。正解を知らないと指示文は読めない
+async function derive(salt, step, ans){
+  const base = await crypto.subtle.importKey('raw', te.encode(norm(ans)), 'PBKDF2', false, ['deriveBits']);
+  const b = new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:te.encode(salt + '|' + step), iterations:100000, hash:'SHA-256'}, base, 512));
+  return { check: hex(b.slice(0,32)), key: await crypto.subtle.importKey('raw', b.slice(32), 'AES-GCM', false, ['encrypt','decrypt']) };
+}
+async function tryOpen(salt, step, entry, ans){
+  const d = await derive(salt, step, ans);
+  if (d.check !== entry.check) return null;
+  try { return td.decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(entry.iv)}, d.key, unb64(entry.ct))); }
+  catch(e){ return ''; }
+}
+async function seal(salt, step, ans, text){
+  const d = await derive(salt, step, ans);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, d.key, te.encode(text)));
+  return { check: d.check, iv: b64(iv), ct: b64(ct) };
+}
+
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
+};
+const PKEY = 'nazo-play-' + CONFIG.salt, AKEY = 'nazo-admin-' + CONFIG.salt;
+let play = store.get(PKEY) || { step:1, notes:[] };
+if (play.step > CONFIG.steps.length + 1) play = { step:1, notes:[] };
+
+const root = document.createElement('div'); root.className = 'wrap'; document.body.appendChild(root);
+let canEdit = false, artifactApi = null;
+
+// ===== 回答画面 =====
+function renderPlay(flash){
+  const n = CONFIG.steps.length, s = play.step, last = play.notes[play.notes.length - 1];
+  const bars = CONFIG.steps.map((_, i) => `<i class="${i + 1 < s ? 'done' : i + 1 === s ? 'now' : ''}"></i>`).join('');
+  const done = n > 0 && s > n;
+  const past = play.notes.slice(0, done ? -1 : -1);
+  root.innerHTML = `<div class="panel">
+    ${n ? `<div class="steps" aria-hidden="true">${bars}</div>` : ''}
+    ${!n ? '<p class="empty">まだSTEPが登録されていません。</p>' : done
+      ? `<div class="clear ${flash ? 'flash' : ''}"><span class="eyebrow">ALL STEPS CLEARED</span><h1>CLEAR</h1></div>
+         ${last ? `<div class="note"><span class="eyebrow">MESSAGE</span><p>${esc(last.text)}</p></div>` : ''}`
+      : `<div class="label ${flash ? 'flash' : ''}"><small>CURRENT</small><h1>STEP${s}</h1></div>
+         <form class="answer" id="form" novalidate>
+           ${fieldsOf(CONFIG.steps[s - 1]).length
+             ? fieldsOf(CONFIG.steps[s - 1]).map((f, k) => `<label class="fld"><span>${esc(f)}</span><input class="ans" id="${k ? 'answer-' + k : 'answer'}" type="text" autocomplete="off" placeholder="ひらがなで入力" aria-label="STEP${s}の解答${esc(f)}"></label>`).join('')
+             : `<input class="ans" id="answer" type="text" autocomplete="off" placeholder="ひらがなで入力" aria-label="STEP${s}の解答">`}
+           <button class="primary" type="submit">判定する</button>
+         </form>
+         <p class="msg" id="msg" aria-live="polite"></p>`}
+    <button class="scan" id="scanBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM14 14h2v2h-2z"/></svg>QRコードを読み取る</button>
+    <input type="file" id="qrfile" accept="image/*" capture="environment" hidden>
+    <div class="row" id="resetRow">${s > 1 ? '<button class="sub" id="reset" type="button">最初からやり直す</button>' : ''}${canEdit ? '<button class="sub" id="toAdmin" type="button">管理画面</button>' : ''}</div>
+  </div>`;
+  const form = document.getElementById('form');
+  if (form){
+    const inputs = [...form.querySelectorAll('input.ans')], msg = document.getElementById('msg');
+    const labels = fieldsOf(CONFIG.steps[s - 1]);
+    const show = (t, x) => { msg.className = 'msg ' + t; msg.textContent = x; };
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const vals = inputs.map(x => norm(x.value));
+      for (let k = 0; k < vals.length; k++){
+        const name = labels.length ? `${labels[k]}の` : '';
+        if (!vals[k]){ inputs[k].focus(); return show('ng', `${name}解答を入力してください`); }
+        if (!isKana(vals[k])){ inputs[k].focus(); return show('ng', `${name}解答はひらがなで入力してください`); }
+      }
+      const v = vals.join('|'), input = inputs[0];
+      form.querySelector('button').disabled = true;
+      const text = await tryOpen(CONFIG.salt, s, CONFIG.steps[s - 1], v);
+      form.querySelector('button').disabled = false;
+      if (text === null){
+        show('ng', '不正解です');
+        form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
+        input.select(); return;
+      }
+      play.step = s + 1;
+      if (text){ play.notes.push({ step:s, text }); play.pending = true; }
+      store.set(PKEY, play);
+      renderPlay(true);
+      if (play.pending) showModal(); else document.getElementById('answer')?.focus();
+    });
+  }
+  const reset = document.getElementById('reset');
+  if (reset) reset.onclick = () => {
+    document.getElementById('resetRow').innerHTML = '最初に戻しますか？ <button class="sub" id="yes" type="button">戻す</button><button class="sub" id="no" type="button">やめる</button>';
+    document.getElementById('yes').onclick = () => { play = { step:1, notes:[] }; store.set(PKEY, play); renderPlay(); };
+    document.getElementById('no').onclick = () => renderPlay();
+  };
+  const ta = document.getElementById('toAdmin'); if (ta) ta.onclick = openAdmin;
+  document.getElementById('qrfile').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) scanQR(f); };
+  document.getElementById('scanBtn').onclick = openCamera;
+}
+
+// ===== QRコード読み取り =====
+
+// カメラ映像から読み取る。カメラが使えない環境では写真で読み取る
+let camStream = null, camTimer = null;
+function stopCamera(){
+  if (camTimer){ clearTimeout(camTimer); camTimer = null; }
+  if (camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+}
+function decodeCanvas(c, ctx){
+  if (typeof jsQR !== 'function') return null;
+  const img = ctx.getImageData(0, 0, c.width, c.height);
+  const r = jsQR(img.data, img.width, img.height, { inversionAttempts:'dontInvert' });
+  return r ? r.data : null;
+}
+async function openCamera(){
+  if (!navigator.mediaDevices?.getUserMedia){ document.getElementById('qrfile').click(); return; }
+  showScan(`<p class="eyebrow" style="text-align:center">QRコードをカメラに映してください</p>
+    <div class="cam"><video id="camVideo" playsinline muted></video><div class="frame"></div></div>
+    <p class="ask" id="camMsg">カメラを起動しています…</p>
+    <div class="row"><label class="sub" for="qrfile" id="camPhoto">写真で読み取る</label><button class="sub" id="camClose" type="button">閉じる</button></div>`);
+  const close = () => { stopCamera(); document.getElementById('scanModal')?.remove(); if (!document.getElementById('modal')) document.body.style.overflow = ''; };
+  document.getElementById('camClose').onclick = close;
+  document.getElementById('camPhoto').addEventListener('click', () => setTimeout(close, 0));
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ ideal:'environment' } }, audio:false });
+  } catch(e){
+    const m = document.getElementById('camMsg');
+    if (m) m.textContent = (e && e.name === 'NotAllowedError')
+      ? 'カメラの使用が許可されていません。ブラウザの設定でカメラを許可するか、「写真で読み取る」を使ってください。'
+      : 'この環境ではカメラを使えません。「写真で読み取る」を使ってください。';
+    document.querySelector('#scanModal .cam')?.remove();
+    return;
+  }
+  const v = document.getElementById('camVideo');
+  if (!v){ stopCamera(); return; }
+  v.srcObject = camStream;
+  try { await v.play(); } catch(e){}
+  document.getElementById('camMsg').textContent = '読み取っています…';
+  const det = ('BarcodeDetector' in window) ? (() => { try { return new BarcodeDetector({ formats:['qr_code'] }); } catch(e){ return null; } })() : null;
+  const c = document.createElement('canvas'), ctx = c.getContext('2d', { willReadFrequently:true });
+  const tick = async () => {
+    if (!camStream) return;
+    let text = null;
+    if (v.videoWidth){
+      const scale = Math.min(1, 800 / Math.max(v.videoWidth, v.videoHeight));
+      c.width = Math.round(v.videoWidth * scale); c.height = Math.round(v.videoHeight * scale);
+      ctx.drawImage(v, 0, 0, c.width, c.height);
+      if (det){ try { const r = await det.detect(c); if (r[0]) text = r[0].rawValue; } catch(e){} }
+      if (text === null) text = decodeCanvas(c, ctx);
+    }
+    if (!camStream) return;
+    if (text !== null){ stopCamera(); showResult(text); return; }
+    camTimer = setTimeout(tick, 200);
+  };
+  tick();
+}
+function showResult(text){
+  const isUrl = /^https?:\/\//i.test(text);
+  showScan(`<p class="eyebrow" style="text-align:center">読み取った内容</p><p class="body">${esc(text)}</p>
+    ${isUrl ? `<a class="openlink" href="${esc(text)}" target="_blank" rel="noopener">このページを開く</a>` : ''}`, true);
+}
+
+// カメラで撮った写真（または画像ファイル）からQRコードを探す
+async function scanQR(file){
+  showScan('<p class="ask">読み取っています…</p>');
+  let text = null;
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, 1400 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+    const ctx = c.getContext('2d', { willReadFrequently:true });
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    if ('BarcodeDetector' in window){
+      try { const r = await new BarcodeDetector({ formats:['qr_code'] }).detect(c); if (r[0]) text = r[0].rawValue; } catch(e){}
+    }
+    if (text === null && typeof jsQR === 'function'){
+      const img = ctx.getImageData(0, 0, c.width, c.height);
+      const r = jsQR(img.data, img.width, img.height, { inversionAttempts:'attemptBoth' });
+      if (r) text = r.data;
+    }
+  } catch(e){}
+  if (text === null) return showScan('<p class="body">QRコードが見つかりませんでした。</p><p class="ask">QRコードが画面の中央に大きく、ピントが合うように撮り直してください。</p>', true);
+  showResult(text);
+}
+function showScan(inner, closable){
+  document.getElementById('scanModal')?.remove();
+  const el = document.createElement('div');
+  el.className = 'modal'; el.id = 'scanModal';
+  el.innerHTML = `<div class="card" role="dialog" aria-modal="true" aria-label="QRコードの読み取り">${inner}
+    ${closable ? '<div class="row"><button class="sub retry" type="button">もう一度読み取る</button><button class="sub" id="scanClose" type="button">閉じる</button></div>' : ''}</div>`;
+  document.body.appendChild(el);
+  document.body.style.overflow = 'hidden';
+  const close = () => { el.remove(); if (!document.getElementById('modal')) document.body.style.overflow = ''; };
+  document.getElementById('scanClose')?.addEventListener('click', close);
+  el.querySelector('.retry')?.addEventListener('click', () => { close(); openCamera(); });
+  document.getElementById('scanClose')?.focus();
+}
+
+// ===== 指示文ポップアップ =====
+// 閉じるまで残り、ページを開き直しても未確認なら再表示する
+function showModal(again){
+  const last = play.notes[play.notes.length - 1]; if (!last) return;
+  document.getElementById('modal')?.remove();
+  const final = play.step > CONFIG.steps.length;
+  const el = document.createElement('div');
+  el.className = 'modal'; el.id = 'modal';
+  el.innerHTML = `<div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="top">${final ? `<span class="eyebrow">STEP${last.step} CLEAR</span><h2 id="mtitle">おめでとうございます</h2>` : `<h2 id="mtitle">STEP${last.step} CLEAR</h2>`}</div>
+    <p class="body">${esc(last.text)}</p>
+    <p class="ask">${again ? '確認したら閉じてください。' : final ? '内容を確認したら閉じてください。' : '指示どおりに行動が完了したら、下のボタンで閉じてください。'}</p>
+    <button class="primary" id="mclose" type="button">${again ? '閉じる' : final ? '確認しました' : '行動が完了したので閉じる'}</button>
+  </div>`;
+  document.body.appendChild(el);
+  document.body.style.overflow = 'hidden';
+  const btn = document.getElementById('mclose');
+  btn.focus();
+  el.addEventListener('keydown', e => { if (e.key === 'Tab'){ e.preventDefault(); btn.focus(); } });
+  btn.onclick = () => {
+    el.remove(); document.body.style.overflow = '';
+    if (play.pending){ play.pending = false; store.set(PKEY, play); }
+    document.getElementById('answer')?.focus();
+  };
+}
+
+// ===== 管理画面 =====
+// 各STEPの状態: locked=登録済みだが正解未入力（指示文は暗号化されたまま）, open=編集可
+let rows = [];
+async function openAdmin(){
+  const cache = store.get(AKEY) || {};
+  rows = CONFIG.steps.map(e => { const f = fieldsOf(e); return { entry:e, fields:f, answers:f.length ? f.map(() => '') : [''], text:'', open:false }; });
+  for (let i = 0; i < rows.length; i++){
+    const a = cache[i + 1];
+    if (a){
+      const t = await tryOpen(CONFIG.salt, i + 1, rows[i].entry, a);
+      if (t !== null){ const r = rows[i]; r.answers = r.fields.length ? a.split('|') : [a]; r.text = t; r.open = true; }
+    }
+  }
+  renderAdmin();
+}
+const joined = r => r.answers.map(norm).join('|');
+function renderAdmin(status){
+  root.innerHTML = `<div class="panel wide">
+    <div class="adminhead"><h1>管理画面</h1><button class="sub" id="back" type="button">回答画面に戻る</button></div>
+    <p class="lead">各STEPの正解と、そのSTEPを突破したときに表示する指示文を設定します。最後のSTEPの指示文はクリア画面に表示されます。指示文は正解を知らないと読めない形で保存されるため、登録済みのSTEPを編集するときは先に正解を入力してください。</p>
+    ${rows.map((r, i) => `<section class="stepedit" data-i="${i}">
+      <header><h2>STEP${i + 1}</h2>
+        <div class="row"><span class="state ${r.open ? 'on' : ''}">${r.open ? '編集できます' : '正解を入力すると編集できます'}</span>
+        <button class="sub" data-del="${i}" type="button">削除</button></div></header>
+      <label>解答欄の名前（複数あるときは「A,B」のようにカンマで区切る・1つなら空欄）<input type="text" id="fld-${i}" value="${esc(r.fields.join(','))}" autocomplete="off" placeholder="例：A,B"></label>
+      <div class="ansgrid">${(r.fields.length ? r.fields : ['']).map((f, k) => `<label>${f ? `${esc(f)} の正解（ひらがな）` : '正解（ひらがな）'}<input type="text" id="ans-${i}-${k}" value="${esc(r.answers[k] || '')}" autocomplete="off" placeholder="${r.entry && !r.open ? '登録済みの正解を入力' : '例：はじまり'}"></label>`).join('')}</div>
+      <label>突破時の指示文<textarea id="txt-${i}" ${r.open ? '' : 'disabled'} placeholder="${r.open ? (i + 1 === rows.length ? '例：おめでとうございます。受付にこの画面を見せてください。' : `例：STEP${i + 2}へ進むための指示`) : '正解を入力すると表示されます'}">${esc(r.text)}</textarea></label>
+    </section>`).join('')}
+    <div class="row end"><button class="sub" id="add" type="button">＋ STEPを追加</button></div>
+    <p class="msg ${status?.type || ''}" id="amsg" aria-live="polite">${esc(status?.text || '')}</p>
+    <div class="row end"><button class="primary" id="save" type="button">保存して公開</button></div>
+  </div>`;
+  rows.forEach((r, i) => {
+    const ti = document.getElementById('txt-' + i);
+    document.getElementById('fld-' + i).addEventListener('change', e => {
+      const f = parseFields(e.target.value);
+      r.fields = f.length > 1 ? f : [];
+      const n = r.fields.length || 1;
+      r.answers = Array.from({ length:n }, (_, k) => r.answers[k] || '');
+      renderAdmin();
+    });
+    r.answers.forEach((_, k) => {
+      const ai = document.getElementById(`ans-${i}-${k}`);
+      ai.addEventListener('input', async () => {
+        r.answers[k] = ai.value;
+        if (!r.open && r.entry && r.answers.every(x => norm(x))){
+          const t = await tryOpen(CONFIG.salt, i + 1, r.entry, joined(r));
+          if (t !== null){ r.open = true; r.text = t; renderAdmin(); document.getElementById(`ans-${i}-${k}`)?.focus(); }
+        }
+      });
+    });
+    ti.addEventListener('input', () => { r.text = ti.value; });
+  });
+  root.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { rows.splice(+b.dataset.del, 1); renderAdmin(); });
+  document.getElementById('add').onclick = () => { rows.push({ entry:null, fields:[], answers:[''], text:'', open:true }); renderAdmin(); };
+  document.getElementById('back').onclick = () => renderPlay();
+  document.getElementById('save').onclick = save;
+}
+async function save(){
+  const fail = text => { const m = document.getElementById('amsg'); m.className = 'msg ng'; m.textContent = text; };
+  for (let i = 0; i < rows.length; i++){
+    const r = rows[i];
+    if (!r.open) return fail(`STEP${i + 1} の正解を入力してください（入力するまで保存できません）`);
+    for (let k = 0; k < r.answers.length; k++){
+      const a = norm(r.answers[k]), name = r.fields.length ? ` ${r.fields[k]}` : '';
+      if (!a) return fail(`STEP${i + 1}${name} の正解が空欄です`);
+      if (!isKana(a)) return fail(`STEP${i + 1}${name} の正解はひらがなで入力してください`);
+    }
+  }
+  if (!artifactApi) return fail('この画面からは保存できません。ページの編集権限があるアカウントで開いてください。');
+  document.getElementById('save').disabled = true;
+  const m = document.getElementById('amsg'); m.className = 'msg'; m.textContent = '保存しています…';
+  const steps = [], cache = {};
+  for (let i = 0; i < rows.length; i++){
+    const entry = await seal(CONFIG.salt, i + 1, joined(rows[i]), rows[i].text);
+    steps.push(rows[i].fields.length ? { fields: rows[i].fields, ...entry } : entry);
+    cache[i + 1] = joined(rows[i]);
+  }
+  store.set(AKEY, cache);
+  const cfg = JSON.stringify({ salt: CONFIG.salt, steps }).replace(/</g, '\\u003c');
+  const reset = document.head.querySelector('style')?.textContent || '';
+  const html = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + reset + '</style></head><body>'
+    + '<title>' + document.title + '</title>' + document.querySelector('link[href*="fonts.googleapis"]').outerHTML
+    + '<style id="app-style">' + document.getElementById('app-style').textContent + '</style>'
+    + '<script src="' + document.getElementById('qrlib').getAttribute('src') + '" id="qrlib"></scr' + 'ipt>'
+    + '<script type="application/json" id="config">' + cfg + '</scr' + 'ipt>'
+    + '<script id="app">' + document.getElementById('app').textContent + '</scr' + 'ipt>'
+    + '</body></html>';
+  try {
+    await artifactApi.publish(html);
+    m.className = 'msg ok'; m.textContent = '保存しました。ページを読み込み直しています…';
+  } catch(e){
+    document.getElementById('save').disabled = false;
+    if (e?.code === 'conflict') fail('他の場所で更新されたため保存できませんでした。最新の内容を読み込み直します。');
+    else if (e?.code === 'not_writer' || e?.code === 'not_granted') fail('このアカウントには保存する権限がありません。');
+    else if (e?.code === 'rate_limited') fail('保存が続いたため一時的に止まっています。少し待ってから保存してください。');
+    else fail('保存できませんでした（' + (e?.code || 'エラー') + '）。もう一度お試しください。');
+  }
+}
+
+renderPlay();
+if (play.pending) showModal();
+(async () => {
+  try {
+    const user = await window.claude?.use?.('user');
+    canEdit = (await user?.canEdit()) ?? false;
+    if (canEdit){ artifactApi = await window.claude.use('artifact'); renderPlay(); }
+  } catch(e){}
+})();
+})();
+</script>
+</body></html>
