@@ -409,7 +409,9 @@ function renderPlay(flash){
     if (adminOnly){
       inputs.forEach(x => {
         x.readOnly = true;
-        x.addEventListener('focus', () => { x.blur(); denied(); });
+        // 画面の切り替えで自動的にカーソルが入ったときは出さず、本人が触ったときだけ出す
+        x.addEventListener('pointerdown', e => { e.preventDefault(); denied(); });
+        x.addEventListener('keydown', e => { if (e.key !== 'Tab') { e.preventDefault(); denied(); } });
       });
     }
     form.addEventListener('submit', async e => {
