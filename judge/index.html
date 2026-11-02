@@ -76,6 +76,8 @@ button.lockbtn.opened{box-shadow:none;color:var(--muted);border-color:var(--line
 @keyframes seal{0%{transform:scale(.4) rotate(-20deg);opacity:0}60%{transform:scale(1.12) rotate(4deg);opacity:1}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){.unlocked.fresh .seal{animation:none}}
 .loginbadge{position:fixed;z-index:5;top:calc(12px + env(safe-area-inset-top, 0px));right:12px;font-size:.78rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+button.condbtn{width:100%;padding:12px;font-size:.95rem;font-weight:700;color:var(--ink);border-color:var(--ng)}
+.modal .body.cond{text-align:center;font-family:var(--f-display);font-weight:800;font-size:1.3rem;line-height:1.8}
 .loginbadge.on.adn{border-color:var(--ng);background:rgba(255,107,138,.12)}
 .loginbadge.on.adn::before{background:var(--ng)}
 .loginbadge.on{border-color:var(--purple);color:var(--ink);background:var(--purple-soft)}
@@ -222,6 +224,14 @@ function showUnlocked(fresh){
   document.getElementById('ulClose').onclick = closeScan;
   document.getElementById('ulClose').focus();
 }
+// 管理者だけが見られるクリア条件
+function showCondition(){
+  showScan(`<div class="top"><span class="eyebrow">ADMIN ONLY</span></div>
+    <p class="body cond">クリア条件：全てのキューブの正解を入力すること</p>
+    <button class="primary" id="condClose" type="button">閉じる</button>`);
+  document.getElementById('condClose').onclick = closeScan;
+  document.getElementById('condClose').focus();
+}
 function closeScan(){
   stopCamera();
   document.getElementById('scanModal')?.remove();
@@ -250,6 +260,7 @@ function renderPlay(flash){
     ${!done && n && s === CONFIG.lock?.step ? (role
       ? `<button class="lockbtn ${unlocked ? 'opened' : ''}" id="lockBtn" type="button">${LOCK_SVG}${unlocked ? '厳重ロック 解除済み' : '厳重ロック解除'}</button>`
       : `<button class="scan" id="scanBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM14 14h2v2h-2z"/></svg>ログイン</button>`) : ''}
+    ${role === 'adn' ? '<button class="sub condbtn" id="condBtn" type="button">クリア条件</button>' : ''}
     <input type="file" id="qrfile" accept="image/*" capture="environment" hidden>
     <div class="row" id="resetRow">${s > 1 ? '<button class="sub" id="reset" type="button">最初からやり直す</button>' : ''}${canEdit ? '<button class="sub" id="toAdmin" type="button">管理画面</button>' : ''}</div>
   </div>`;
@@ -291,6 +302,7 @@ function renderPlay(flash){
   const ta = document.getElementById('toAdmin'); if (ta) ta.onclick = openAdmin;
   document.getElementById('qrfile').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) scanQR(f); };
   const sb = document.getElementById('scanBtn'); if (sb) sb.onclick = openCamera;
+  const cb = document.getElementById('condBtn'); if (cb) cb.onclick = showCondition;
   const lb = document.getElementById('lockBtn'); if (lb) lb.onclick = () => unlocked ? showUnlocked() : askPassword();
 }
 
