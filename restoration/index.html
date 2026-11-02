@@ -78,6 +78,10 @@ button.lockbtn.opened{box-shadow:none;color:var(--muted);border-color:var(--line
 .loginbadge{position:fixed;z-index:5;top:calc(12px + env(safe-area-inset-top, 0px));right:12px;font-size:.78rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
 button.condbtn{width:100%;padding:12px;font-size:.95rem;font-weight:700;color:var(--ink);border-color:var(--ng)}
 .modal .body.cond{text-align:center;font-family:var(--f-display);font-weight:800;font-size:1.3rem;line-height:1.8}
+.modal .once{margin:0;text-align:center;color:var(--ng);font-weight:700;font-size:.95rem}
+.unlocked.failed .seal{border-color:var(--ng);box-shadow:0 0 40px rgba(255,107,138,.25)}
+.unlocked.failed .seal svg{stroke:var(--ng)}
+.unlocked.failed h2{color:var(--ng)}
 .loginbadge.on.adn{border-color:var(--ng);background:rgba(255,107,138,.12)}
 .loginbadge.on.adn::before{background:var(--ng)}
 .loginbadge.on{border-color:var(--purple);color:var(--ink);background:var(--purple-soft)}
@@ -108,7 +112,7 @@ a.openlink{display:block;text-align:center;font-weight:700;padding:14px;border-r
 .modal .body{margin:0;font-size:1.15rem;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;border-block:1px solid var(--line);padding-block:20px}
 .modal .ask{margin:0;text-align:center;color:var(--muted);font-size:.9rem}
 .reopen{background:var(--purple-soft);color:var(--ink);border:1px solid var(--purple);font-weight:400;font-size:.9rem}
-</style><script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" id="qrlib"></script><script type="application/json" id="config">{"salt":"98acf7ea01c415c5","steps":[{"fields":["A","B"],"check":"f1f27f7f4b564b1c68e334ba96c5912e3c18303d856ebcd9169f77446e646226","iv":"bQM8i4Q0ZpDrWeUM","ct":"rirKehqczRUiOpB+jbmehLsXF0Jxc4wqyuUkSnDCPKtaU0lobbdckIXp8WVHlGb1Z4PJdJVApUdfAV6xa8gTaE2b"},{"fields":["C","D","E"],"check":"fad856fc00e55b276aaa540f5bb69c39973a25adc2842ea914ce35a566dc53ff","iv":"2PdpIhrMsD8WHCk+","ct":"b9F5EeIGLrvIrk4zbDiUAz4LVBEor6TFs1dw61onfVr90k/NHM9FBk0GXLs693S4uj9ySGgNo9Gp20MQt5sz1q7v1ht/MwihuW6Tta3z5xEHFN+W8UytLoD3RaD2bKU9Pmul9h6i30ga"},{"fields":["F","G","H"],"check":"35b2eebabe1f10d553016c370e8818e6073e95e1eb9e9dde07363a5c5b2d08bc","iv":"l2BSHW3UK3gVWqKG","ct":"0/ZdAkGSgJBcf16jXr9rDL/4fvCvMTGpuTM8n6SGLybfckCw2SKZrXl+iid/rR5/3okzNVcJ1bLLymYmeHjlNyHHl+nldR8aDdDrgjB2fBnasyL/oYD8sVMKrrESm4LdY7VE43QQfGDwllTEQVRulrhthIIfsw=="},{"fields":["I"],"check":"0147d6a0f19846aba64344b5b7a85db6fd13004f84ae264de565f0e2116bf1c0","iv":"qS0YYd8EVu4Om3Jn","ct":"k4kvPzL7NoiipvW15BhEidPlZHpR8o82OPkV5k8CLA1lAtPQNoThnRrVTfRstEQyAuuP6lvmUAyNE43KeS1Ai8e/VI3FdjFyZuwB1aVyUP02CkY5QG/Vh8MYei3kfr1qoOr9ATSoLlAK0bf+ZDGh"}],"lock":{"step":4,"check":"666cc4acda48ca3bd327317922c4f74fbf8a8ae716359d6582d6270959c7deec"}}</script><script id="app">
+</style><script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" id="qrlib"></script><script type="application/json" id="config">{"salt":"98acf7ea01c415c5","steps":[{"fields":["A","B"],"check":"f1f27f7f4b564b1c68e334ba96c5912e3c18303d856ebcd9169f77446e646226","iv":"bQM8i4Q0ZpDrWeUM","ct":"rirKehqczRUiOpB+jbmehLsXF0Jxc4wqyuUkSnDCPKtaU0lobbdckIXp8WVHlGb1Z4PJdJVApUdfAV6xa8gTaE2b"},{"fields":["C","D","E"],"check":"fad856fc00e55b276aaa540f5bb69c39973a25adc2842ea914ce35a566dc53ff","iv":"2PdpIhrMsD8WHCk+","ct":"b9F5EeIGLrvIrk4zbDiUAz4LVBEor6TFs1dw61onfVr90k/NHM9FBk0GXLs693S4uj9ySGgNo9Gp20MQt5sz1q7v1ht/MwihuW6Tta3z5xEHFN+W8UytLoD3RaD2bKU9Pmul9h6i30ga"},{"fields":["F","G","H"],"check":"35b2eebabe1f10d553016c370e8818e6073e95e1eb9e9dde07363a5c5b2d08bc","iv":"l2BSHW3UK3gVWqKG","ct":"0/ZdAkGSgJBcf16jXr9rDL/4fvCvMTGpuTM8n6SGLybfckCw2SKZrXl+iid/rR5/3okzNVcJ1bLLymYmeHjlNyHHl+nldR8aDdDrgjB2fBnasyL/oYD8sVMKrrESm4LdY7VE43QQfGDwllTEQVRulrhthIIfsw=="},{"fields":["I"],"check":"0147d6a0f19846aba64344b5b7a85db6fd13004f84ae264de565f0e2116bf1c0","iv":"qS0YYd8EVu4Om3Jn","ct":"k4kvPzL7NoiipvW15BhEidPlZHpR8o82OPkV5k8CLA1lAtPQNoThnRrVTfRstEQyAuuP6lvmUAyNE43KeS1Ai8e/VI3FdjFyZuwB1aVyUP02CkY5QG/Vh8MYei3kfr1qoOr9ATSoLlAK0bf+ZDGh"}],"lock":{"step":4,"check":"666cc4acda48ca3bd327317922c4f74fbf8a8ae716359d6582d6270959c7deec"},"twofa":{"step":4,"ok":"7fedc79023334cdeeee850c44ca3d5b5e4370d6ffa82067707a04a16801b21b1"}}</script><script id="app">
 (() => {
 const CONFIG = JSON.parse(document.getElementById('config').textContent);
 const te = new TextEncoder(), td = new TextDecoder();
@@ -224,6 +228,55 @@ function showUnlocked(fresh){
   document.getElementById('ulClose').onclick = closeScan;
   document.getElementById('ulClose').focus();
 }
+// ===== 2段階認証 =====
+// 認証キーは照合用の値だけを持つ。入力は1度きりで、結果はこの端末に記録する
+const TKEY = 'nazo-2fa-' + CONFIG.salt;
+async function keyCheck(k){
+  const buf = await crypto.subtle.digest('SHA-256', te.encode(CONFIG.salt + '|2fa|' + k.normalize('NFKC').trim().toLowerCase()));
+  return hex(new Uint8Array(buf));
+}
+function show2FA(s){
+  const used = store.get(TKEY);
+  if (used) return show2FAResult(used === 'ok', s);
+  showScan(`<div class="top"><span class="eyebrow">TWO-STEP VERIFICATION</span><h2>2段階認証</h2></div>
+    <p class="body">2段階認証が必要です。手元の端末から管理者権限でコードを読み取り、認証キーを確認してください</p>
+    <p class="once">※入力は1度きりです</p>
+    <form class="answer" id="tfForm" novalidate>
+      <input id="tfKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="認証キーを入力" aria-label="認証キー">
+      <button class="primary" type="submit">認証する</button>
+    </form>
+    <p class="msg" id="tfMsg" aria-live="polite"></p>
+    <div class="row"><button class="sub" id="tfCancel" type="button">やめる</button></div>`);
+  const form = document.getElementById('tfForm'), input = document.getElementById('tfKey'), msg = document.getElementById('tfMsg');
+  input.focus();
+  document.getElementById('tfCancel').onclick = closeScan;
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!input.value.trim()){ msg.className = 'msg ng'; msg.textContent = '認証キーを入力してください'; return; }
+    form.querySelector('button').disabled = true;
+    const ok = (await keyCheck(input.value)) === CONFIG.twofa.ok;
+    store.set(TKEY, ok ? 'ok' : 'ng');
+    show2FAResult(ok, s, true);
+  });
+}
+function show2FAResult(ok, s, fresh){
+  showScan(`<div class="unlocked ${fresh ? 'fresh' : ''} ${ok ? '' : 'failed'}">
+      <div class="seal">${ok ? UNLOCK_SVG : LOCK_SVG}</div>
+      <span class="eyebrow">${ok ? 'RESTORATION COMPLETE' : 'RESTORATION FAILED'}</span>
+      <h2>${ok ? '復元成功' : '復元失敗'}</h2>
+      <p class="body cond">${ok ? '復元成功、ゲームクリアです' : '復元に失敗しました'}</p>
+    </div>
+    <button class="primary" id="tfClose" type="button">閉じる</button>`);
+  const btn = document.getElementById('tfClose'); btn.focus();
+  btn.onclick = () => {
+    closeScan();
+    if (ok && play.step === s){
+      play.step = s + 1; play.notes.push({ step:s, text:'復元成功、ゲームクリアです' }); play.pending = false;
+      store.set(PKEY, play); renderPlay(true);
+    }
+  };
+}
+
 // 管理者だけが見られるクリア条件
 function showCondition(){
   showScan(`<div class="top"><span class="eyebrow">ADMIN ONLY</span></div>
@@ -286,6 +339,8 @@ function renderPlay(flash){
         form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
         input.select(); return;
       }
+      // 管理者が正解を入れたときは、先に2段階認証を求める
+      if (role === 'adn' && CONFIG.twofa && s === CONFIG.twofa.step){ show('', ''); return show2FA(s); }
       play.step = s + 1;
       if (text){ play.notes.push({ step:s, text }); play.pending = true; }
       store.set(PKEY, play);
@@ -296,7 +351,7 @@ function renderPlay(flash){
   const reset = document.getElementById('reset');
   if (reset) reset.onclick = () => {
     document.getElementById('resetRow').innerHTML = '最初に戻しますか？ <button class="sub" id="yes" type="button">戻す</button><button class="sub" id="no" type="button">やめる</button>';
-    document.getElementById('yes').onclick = () => { play = { step:1, notes:[] }; store.set(PKEY, play); role = null; store.set(RKEY, null); unlocked = false; store.set(LKEY, false); renderBadge(); renderPlay(); };
+    document.getElementById('yes').onclick = () => { play = { step:1, notes:[] }; store.set(PKEY, play); role = null; store.set(RKEY, null); unlocked = false; store.set(LKEY, false); store.set(TKEY, null); renderBadge(); renderPlay(); };
     document.getElementById('no').onclick = () => renderPlay();
   };
   const ta = document.getElementById('toAdmin'); if (ta) ta.onclick = openAdmin;
@@ -512,7 +567,7 @@ async function save(){
     cache[i + 1] = joined(rows[i]);
   }
   store.set(AKEY, cache);
-  const cfg = JSON.stringify({ salt: CONFIG.salt, steps, ...(CONFIG.lock ? { lock: CONFIG.lock } : {}) }).replace(/</g, '\\u003c');
+  const cfg = JSON.stringify({ salt: CONFIG.salt, steps, ...(CONFIG.lock ? { lock: CONFIG.lock } : {}), ...(CONFIG.twofa ? { twofa: CONFIG.twofa } : {}) }).replace(/</g, '\\u003c');
   const reset = document.head.querySelector('style')?.textContent || '';
   const html = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + reset + '</style></head><body>'
     + '<title>' + document.title + '</title>' + document.querySelector('link[href*="fonts.googleapis"]').outerHTML
