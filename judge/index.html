@@ -64,11 +64,14 @@ details.hist li p{margin:0;white-space:pre-wrap;color:var(--ink);overflow-wrap:a
 .state{font-size:.75rem;padding:2px 8px;border-radius:10px;border:1px solid var(--line);color:var(--muted)}
 .state.on{border-color:var(--purple);color:var(--purple)}
 .empty{text-align:center;color:var(--muted);margin:0}
+.loginbadge{position:fixed;z-index:5;top:calc(12px + env(safe-area-inset-top, 0px));right:12px;font-size:.78rem;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+.loginbadge.on{border-color:var(--purple);color:var(--ink);background:var(--purple-soft)}
+.loginbadge.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--purple);margin-right:7px;vertical-align:1px}
 label.fld{display:grid;grid-template-columns:2.2em 1fr;align-items:center;gap:10px}
 label.fld span{font-family:var(--f-display);font-weight:800;font-size:1.5rem;color:var(--purple);text-align:center}
 input.ans{font-size:1.2rem;text-align:center;letter-spacing:.1em}
 input.ans::placeholder{letter-spacing:0;font-size:1rem}
-button.scan,label.scan{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1px dashed var(--purple);border-radius:6px;color:var(--ink);cursor:pointer;font-weight:700}
+button.scan,label.scan{background:transparent;font:inherit;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1px dashed var(--purple);border-radius:6px;color:var(--ink);cursor:pointer;font-weight:700}
 button.scan:hover,label.scan:hover{background:var(--purple-soft)}
 button.scan svg,label.scan svg{width:22px;height:22px;fill:none;stroke:var(--purple);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 label.sub{background:transparent;color:var(--muted);border:1px solid var(--line);font-size:.85rem;padding:8px 12px;border-radius:6px;cursor:pointer}
@@ -132,6 +135,27 @@ let play = store.get(PKEY) || { step:1, notes:[] };
 if (play.step > CONFIG.steps.length + 1) play = { step:1, notes:[] };
 
 const root = document.createElement('div'); root.className = 'wrap'; document.body.appendChild(root);
+
+// ===== ログイン状態 =====
+// QRコードの内容に応じた処理。内容（前後の空白は無視）→ 処理
+const ROLES = { participant:'参加者' };
+const RKEY = 'nazo-role-' + CONFIG.salt;
+let role = store.get(RKEY);
+if (!ROLES[role]) role = null;
+const badge = document.createElement('div'); badge.className = 'loginbadge'; badge.setAttribute('aria-live', 'polite');
+document.body.appendChild(badge);
+function renderBadge(){
+  badge.className = 'loginbadge' + (role ? ' on' : '');
+  badge.textContent = role ? `${ROLES[role]}としてログイン` : '未ログイン';
+}
+function login(r){ role = r; store.set(RKEY, r); renderBadge(); }
+renderBadge();
+const QR_ACTIONS = {
+  participant: () => {
+    login('participant');
+    showScan(`<div class="top"><h2>ログインしました</h2></div><p class="body" style="text-align:center">参加者としてログインしました。</p>`, true);
+  },
+};
 let canEdit = false, artifactApi = null;
 
 // ===== 回答画面 =====
@@ -254,6 +278,8 @@ async function openCamera(){
   tick();
 }
 function showResult(text){
+  const act = QR_ACTIONS[text.trim()];
+  if (act) return act();
   const isUrl = /^https?:\/\//i.test(text);
   showScan(`<p class="eyebrow" style="text-align:center">読み取った内容</p><p class="body">${esc(text)}</p>
     ${isUrl ? `<a class="openlink" href="${esc(text)}" target="_blank" rel="noopener">このページを開く</a>` : ''}`, true);
